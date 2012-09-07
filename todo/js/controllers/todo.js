@@ -1,22 +1,14 @@
 define( ['ginger'] , function( ginger ) {
-  var todo = ginger.View.extend({
+  var todoView = ginger.View.extend({
     constructor : function Todo ( data ){
       this.super( Todo , 'constructor' );
       var self = this;
-      var defaults = { description : "Todo description", completed : false };
-      $.extend( {}, data, defaults );
+      
       $.extend( self , data );
-      
       self.$el = $('<li>');
-      var $view = $('<div class="view">');
-			
-      self.$toggle = $('<input class="toggle" type="checkbox">').attr( 'checked' , self.completed ).appendTo( $view );
-      self.$label = $('<label>').text( self.description ).appendTo( $view );
-      self.$destroy = $('<button class="destroy">').appendTo( $view );
-
-      $view.appendTo( self.$el );
-      self.$edit = $('<input class="edit">').val( self.description ).appendTo( self.$el );
       
+      self.todoTemplate = _.template( $('#item-template').html() );
+
       // listeners
       self.on('completed', function( completed ){
         if( completed ) {
@@ -28,31 +20,43 @@ define( ['ginger'] , function( ginger ) {
         }
       })
       self.on('description', function( description ){
-        self.$label.text( $.trim( description ) )
+        self.$label.text(description);
       })
       
-      // events
-      self.$toggle.on('click', function(){
+      // delegates
+      self.$el.on('click','.toggle', function(){
         self.set('completed', this.checked);
-      })
+      });
       
-      self.$label.dblclick(function(){
+      self.$el.on('dblclick', 'label', function(){
         self.$el.addClass( 'editing' );
-        self.$edit.focus();
-        self.$edit.one('blur', function(){
-          self.edit( self.$edit.val() );
+        self.$input.focus();
+        self.$input.one('blur', function(){
+          self.edit( self.$input.val() );
         }).keyup(function( e ){
           if ( e.which === 13 ) {
-            self.edit( self.$edit.val() );
+            self.edit( self.$input.val() );
           }
         })
       })
       
-      self.$destroy.on('click',function(){
+      self.$el.on('click', '.destroy', function(){
         self.$el.remove();
-        self.destroy();
-      });
+        self.delete();
+      })
 	  },
+    render : function( parent ) {
+      this.$el.html(this.todoTemplate({
+				description : this.description,
+				completed : this.completed
+			})).appendTo(parent);
+      if( this.completed ) {
+        this.$el.addClass('completed');
+      }
+      this.$input = $('.edit', this.$el );
+      this.$label = $('label', this.$el );
+      this.$toggle = $('.toggle', this.$el );
+    },
     edit : function( description ) {
       if ( description ) {
         this.set('description', description )
@@ -62,5 +66,5 @@ define( ['ginger'] , function( ginger ) {
       this.$el.removeClass( 'editing' );
     }
 	})
-  return todo;
+  return todoView;
 });

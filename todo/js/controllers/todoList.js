@@ -2,37 +2,20 @@ define( ['ginger',
          'js/models/todo',
          'js/controllers/todo'] , function( ginger , Todo , todoView) {
   var todoList = ginger.View.extend({
-    constructor : function List(collection,options){
+    constructor : function List(collection){
       this.super(List, 'constructor');
-
+  
       var self = this;
       self.set('collection', collection);
-
-      self.options = options;      
-
-      self.$el = $('<section id="todoapp">');
-      // Header
-      self.$header = $('<header id="header"><h1>Todos</h1>');
-      self.$headerInput = $('<input>',{id:"new-todo",placeholder:"What needs to be done?"}).appendTo(self.$header);
-         
-      // Main
-      self.$main = $('<section id="main">');
-      self.$toggleAll = $('<input>',{id:'toggle-all',type:'checkbox'}).appendTo( self.$main );
-      $('<label for="toggle-all">Mark all as complete</label>').appendTo( self.$main );
-      self.$todosContainer = $('<ul id="todo-list">').appendTo(self.$main);
-         
-      // footer
-      self.$footer = $('<footer id="footer">');
-      self.$todoCount = $('<span id="todo-count"><b>1</b>items left</span>').appendTo(self.$footer);
-      self.$clearComplete = $('<button id="clear-completed">').hide().appendTo(self.$footer);
-      self.$filters = $('<ul id="filters">').html('<li><a class="selected" href="#/">All</a></li><li><a href="#/active">Active</a></li><li><a href="#/completed">Completed</a></li>').appendTo(self.$footer);
       
-      self.updateCounter();
-      self.$el.append( self.$header , self.$main , self.$footer );
-
-      $.each(self.collection.items,function(i,todo) {
-      	todo.render(self.$todosContainer);
-      })
+      this.$el = $('#todoapp');
+      this.statsTemplate = _.template( $('#stats-template').html() );
+      
+      self.$headerInput = $('#new-todo');
+      self.$toggleAll = $('#toggle-all');
+      self.$clearComplete = $('#clear-completed');
+      self.$todosContainer = $('#todo-list');
+      
       // events
       self.$headerInput.keyup(function( e ){
         if( e.which === 13 ) {
@@ -60,57 +43,77 @@ define( ['ginger',
       
       // listeners
       self.collection.on( 'added:' , function( todo ) {
-      	self.add( todo )
+        self.updateCounter();
+      })
+      self.collection.on( 'updated: removed:' , function( todo ) {
+        self.updateCompleted();
         self.updateCounter();
       })
     },
-    createTodo : function( data ) {
-      var newtodo = new Todo( data );
-      newtodo.keepSynced();
-      this.collection.add( newtodo );
+    render : function( parent ) {
+      /*$.each(self.collection.items,function(i,todo) {
+      	todo.render(self.$todosContainer);
+      })*/
+
+			$('#footer').html(this.statsTemplate({
+				completed: 0,
+				remaining:1
+			}));
+      this.$todoCount = $('#todo-count');
     },
-    add : function( item ) {
+    createTodo : function( data ) {
+      var model = new Todo( data );
+      model.keepSynced();
+      this.collection.add( model );
+      var view = new todoView( model );
+      view.render( this.$todosContainer );
       var self = this;
-      var todo = new todoView( item );
+      
+      view.on('completed',function(){
+        self.updateCompleted();
+      })
+     /* var todoView = new todoView( todo );
+      todo.render( this.$todosContainer );
+      todo.on('completed',function(){
+        self.updateCompleted();
+      })*/
+    },
+    add : function( model ) {
+      var self = this;
+      var todo = new todoView( model );
       todo.render( this.$todosContainer );
       todo.on('completed',function(){
         self.updateCompleted();
       })
     },
     updateCounter : function() {
-      var i = this.collection.items.length;
-      switch ( i ) {
-        case 0 : 
-        this.$todoCount.html('<b>0</b> items left');
+      var itemsLeft = this.collection.filter(function( val ) {
+        return !val.completed;
+      })
+      switch ( itemsLeft ) {
         case 1 :
-        this.$todoCount.html('<b>1</b> item left');
+          this.$todoCount.html('<b>1</b> item left');
+          break;
         default :
-        this.$todoCount.html('<b>' + i + '</b> item left');
+          this.$todoCount.html('<b>'+ itemsLeft.length +'</b> items left');
       }
     },
     updateCompleted : function(){
-      var count = 0;
-      $.each(this.collection.items,function(i,todo) {
-        if( todo.completed ) {
-          count++;
-        }
+      var itemsCompleted = this.collection.filter(function( val ) {
+        return val.completed;
       })
-      if( count ) {
-        this.$clearComplete.text('Clear completed(' + count + ')').show();
-      } else {
-        this.$clearComplete.hide();
+      if( itemsCompleted ) {
+        this.$clearComplete.show();
       }
     },
     hideComplete : function() {
-      $( '.completed', this.$todosContainer ).hide();
-      $( 'li' , this.$todosContainer ).not('.completed').show();
+
     },
     hideActive : function() {
-      $( 'li' , this.$todosContainer ).not('.completed').hide();
-      $( '.completed', this.$todosContainer ).show();
+
     },
     showAll : function() {
-      $( 'li' , this.$todosContainer ).show();
+
     }
   })
   return todoList;
