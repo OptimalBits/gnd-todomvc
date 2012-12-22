@@ -1,16 +1,16 @@
 define( ['ginger'] , function( ginger ) {
   var todoView = ginger.View.extend({
-    constructor : function Todo ( data ){
+    constructor : function Todo ( model ){
       this.super( Todo , 'constructor' );
       var self = this;
+      self.model = model;
       
-      $.extend( self , data );
       self.$el = $('<li>');
       
       self.todoTemplate = _.template( $('#item-template').html() );
 
       // listeners
-      self.on('completed', function( completed ){
+      self.model.on('completed', function( completed ){
         if( completed ) {
           self.$toggle.attr( 'checked' , true );
           self.$el.addClass( 'completed' )
@@ -19,13 +19,16 @@ define( ['ginger'] , function( ginger ) {
           self.$el.removeClass( 'completed' )
         }
       })
-      self.on('description', function( description ){
+      self.model.on('description', function( description ){
         self.$label.text(description);
+      })
+      self.model.on('removed:', function( description ){
+        self.$el.remove();
       })
       
       // delegates
       self.$el.on('click','.toggle', function(){
-        self.set('completed', this.checked);
+        self.model.set('completed', this.checked);
       });
       
       self.$el.on('dblclick', 'label', function(){
@@ -42,15 +45,15 @@ define( ['ginger'] , function( ginger ) {
       
       self.$el.on('click', '.destroy', function(){
         self.$el.remove();
-        self.delete();
+        self.model.delete();
       })
 	  },
     render : function( parent ) {
       this.$el.html(this.todoTemplate({
-				description : this.description,
-				completed : this.completed
+				description : this.model.description,
+				completed : this.model.completed
 			})).appendTo(parent);
-      if( this.completed ) {
+      if( this.model.completed ) {
         this.$el.addClass('completed');
       }
       this.$input = $('.edit', this.$el );
@@ -59,7 +62,7 @@ define( ['ginger'] , function( ginger ) {
     },
     edit : function( description ) {
       if ( description ) {
-        this.set('description', description )
+        this.model.set('description', description )
       } else {
         // TODO: Destroy element
       }

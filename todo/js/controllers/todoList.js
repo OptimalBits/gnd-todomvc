@@ -8,12 +8,11 @@ define( ['ginger',
       var self = this;
       self.set('collection', collection);
       
-      this.$el = $('#todoapp');
-      this.statsTemplate = _.template( $('#stats-template').html() );
+      self.$el = $('#todoapp');
+      self.statsTemplate = _.template( $('#stats-template').html() );
       
       self.$headerInput = $('#new-todo');
       self.$toggleAll = $('#toggle-all');
-      self.$clearComplete = $('#clear-completed');
       self.$todosContainer = $('#todo-list');
       
       // events
@@ -34,32 +33,28 @@ define( ['ginger',
           todo.set( 'completed' , inputEl.checked );
         })
       })
-      self.$clearComplete.on( 'click' , function(){
-        $.each( self.collection.items , function( i , todo ) {
-          todo.$el.remove();
-          todo.destroy();
-        })
-      })
       
       // listeners
-      self.collection.on( 'added:' , function( todo ) {
-        self.updateCounter();
-      })
-      self.collection.on( 'updated: removed:' , function( todo ) {
+      self.collection.on( 'added: updated: removed:' , function( todo ) {
         self.updateCompleted();
         self.updateCounter();
       })
     },
     render : function( parent ) {
-      /*$.each(self.collection.items,function(i,todo) {
-      	todo.render(self.$todosContainer);
-      })*/
-
 			$('#footer').html(this.statsTemplate({
 				completed: 0,
-				remaining:1
+				remaining:0
 			}));
       this.$todoCount = $('#todo-count');
+      this.$clearComplete = $('#clear-completed');
+      self = this;
+      self.$clearComplete.on( 'click' , function(){
+        $.each( self.collection.items , function( i , todo ) {
+          if( todo.completed ) {
+            todo.destroy();
+          }
+        })
+      })
     },
     createTodo : function( data ) {
       var model = new Todo( data );
@@ -90,7 +85,7 @@ define( ['ginger',
       var itemsLeft = this.collection.filter(function( val ) {
         return !val.completed;
       })
-      switch ( itemsLeft ) {
+      switch ( itemsLeft.length ) {
         case 1 :
           this.$todoCount.html('<b>1</b> item left');
           break;
@@ -103,18 +98,12 @@ define( ['ginger',
         return val.completed;
       })
       if( itemsCompleted ) {
+        this.$clearComplete.text('Clear completed (' + itemsCompleted.length + ')');
         this.$clearComplete.show();
+      } else {
+        this.$clearComplete.hide();
       }
     },
-    hideComplete : function() {
-
-    },
-    hideActive : function() {
-
-    },
-    showAll : function() {
-
-    }
   })
   return todoList;
 });

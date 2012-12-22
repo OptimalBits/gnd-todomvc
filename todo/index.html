@@ -27,8 +27,8 @@
             main: 'jquery-ui.min'
           },
           'underscore':{
-            path:'https://raw.github.com/amdjs/underscore/master/',
-            main:'underscore-min'
+            path:'js/lib/',
+            main:'underscore'
           },
         }
       };
@@ -55,14 +55,12 @@
 		<p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
 	</div>
   	<script type="text/template" id="item-template">
-      <li>
-        <div class="view">
-    			<input class="toggle" type="checkbox" <%= completed ? 'checked' : '' %>>
-    			<label><%- description %></label>
-    			<button class="destroy"></button>
-    		</div>
-    		<input class="edit" value="<%- description %>">
-      </li>
+      <div class="view">
+  			<input class="toggle" type="checkbox" <%= completed ? 'checked' : '' %>>
+  			<label><%- description %></label>
+  			<button class="destroy"></button>
+  		</div>
+  		<input class="edit" value="<%- description %>">
   	</script>
   	<script type="text/template" id="stats-template">
   		<span id="todo-count"><strong><%= remaining %></strong> <%= remaining === 1 ? 'item' : 'items' %> left</span>
@@ -77,9 +75,7 @@
   				<a href="#/completed">Completed</a>
   			</li>
   		</ul>
-  		<% if (completed) { %>
-  		<button id="clear-completed">Clear completed (<%= completed %>)</button>
-  		<% } %>
+  		<button id="clear-completed" style="display:none">Clear completed (<%= completed %>)</button>
   	</script>
 	</div>
 	<footer id="info">
