@@ -17,9 +17,9 @@ curl( ['ginger',
       req.get(':state', '', function() {
         var state = this.params.state;
         if( state == 'completed' ) {
-          list.hideActive();
+          list.showCompleted();
         } else {
-          list.hideComplete();          
+          list.showActive();          
         }
         $('a', list.$filters).removeClass('selected').filter('[href="#/' + state + '"]').addClass('selected');
       });
