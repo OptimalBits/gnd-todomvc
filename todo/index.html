@@ -13,9 +13,9 @@
     <script type="text/javascript">
       curl = {
         packages: {
-          'ginger': {
-            path: 'js/lib/gnd',
-            main: 'ginger',
+          'gnd': {
+            path: 'js/lib/gnd/dist',
+            main: 'gnd',
             lib: ''
           },
           'jquery': {
@@ -34,57 +34,54 @@
       };
     </script>
   
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="js/lib/underscore.js"></script>
     <script src="js/lib/curl.js"></script>
 </head>
 <body>
 	<section id="todoapp">
 		<header id="header">
 			<h1>todos</h1>
-			<input id="new-todo" placeholder="What needs to be done?" autofocus>
+      <input id="new-todo" data-event="keyup: todolist.addTodo" placeholder="What needs to be done?" autofocus>
 		</header>
+    
 		<section id="main">
-			<input id="toggle-all" type="checkbox">
+			<input id="toggle-all" data-event="click: todolist.toggleAll" type="checkbox">
 			<label for="toggle-all">Mark all as complete</label>
-			<ul id="todo-list"></ul>
-		</section>
-		<footer id="footer"></footer>
-	</section>
-	<div id="info">
-		<p>Double-click to edit a todo</p>
-		<p>Written by <a href="https://github.com/addyosmani">Addy Osmani</a></p>
-		<p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
-	</div>
-  	<script type="text/template" id="item-template">
-      <div class="view">
-  			<input class="toggle" type="checkbox" <%= completed ? 'checked' : '' %>>
-  			<label><%- description %></label>
-  			<button class="destroy"></button>
-  		</div>
-  		<input class="edit" value="<%- description %>">
-  	</script>
-  	<script type="text/template" id="stats-template">
-  		<span id="todo-count"><strong><%= remaining %></strong> <%= remaining === 1 ? 'item' : 'items' %> left</span>
+      
+			<ul id="todo-list">
+        <li id="todo-item" data-each="todos: todo" data-class="completed: todo.completed; editing: todo.isEditing">
+          <div class="view">
+  			    <input class="toggle" type="checkbox" data-bind="checked: todo.completed">
+  			    <label data-bind="text: todo.description" data-event="dblclick: todolist.startEditing"></label>
+  			    <button data-event="click: todolist.removeTodo" class="destroy"></button>
+  		    </div>
+          <input class="edit" data-bind="value: todo.description" data-event="keyup: todolist.endEditing; blur: todolist.endEditing">
+        </li>
+			</ul>
+    </section>
+		
+    <footer id="footer">
+  		<span id="todo-count"><strong data-bind="text: todolist.remaining"></strong> items left</span>
   		<ul id="filters">
   			<li>
-  				<a class="selected" href="#/">All</a>
+  				<a data-class="selected: app.filterAll" href="#/">All</a>
   			</li>
   			<li>
-  				<a href="#/active">Active</a>
+  				<a data-class="selected: app.filterActive" href="#/active">Active</a>
   			</li>
   			<li>
-  				<a href="#/completed">Completed</a>
+  				<a data-class="selected: app.filterCompleted" href="#/completed">Completed</a>
   			</li>
   		</ul>
-  		<button id="clear-completed" style="display:none">Clear completed (<%= completed %>)</button>
-  	</script>
+  		<button id="clear-completed" data-event="click: todolist.clearCompleted" data-show="todolist.completed">Clear completed (<span data-bind="text: todolist.completed"></span>)</button>
+    </footer>
+	</section>
 	</div>
 	<footer id="info">
 		<p>Double-click to edit a todo</p>
-		<!-- Remove the below line ↓ -->
-		<p>Template by <a href="http://github.com/sindresorhus">Sindre Sorhus</a></p>
 		<!-- Change this out with your name and url ↓ -->
-		<p>Created by <a href="http://todomvc.com">you</a></p>
-		<p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+		<p>Created by <a href="http://twitter.com/optimalbits">OptimalBits</a></p>
 	</footer>
 	<!-- Scripts here. Don't remove this ↓ -->
 	<script src="../assets/base.js"></script>
