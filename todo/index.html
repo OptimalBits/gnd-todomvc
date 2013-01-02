@@ -46,7 +46,7 @@
 		</header>
     
 		<section id="main">
-			<input id="toggle-all" data-event="click: todolist.toggleAll" type="checkbox">
+			<input id="toggle-all" data-event="click: todolist.toggleAll" data-bind="checked: todolist.allCompleted" type="checkbox">
 			<label for="toggle-all">Mark all as complete</label>
       
 			<ul id="todo-list">
@@ -61,7 +61,7 @@
 			</ul>
     </section>
 		
-    <footer id="footer">
+    <footer id="footer" data-show="todos.count">
   		<span id="todo-count"><strong data-bind="text: todolist.remaining"></strong> items left</span>
   		<ul id="filters">
   			<li>

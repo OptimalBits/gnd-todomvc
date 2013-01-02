@@ -1,52 +1,74 @@
-curl(['gnd', 'js/controllers/todoList'], function(Gnd, TodoListCtrl) {
+curl(['gnd', 'js/controllers/todoList'], function(Gnd, TodoListCtrl){
   var 
+    TODOLIST_ID = "GndTodoApp",
     Todo = Gnd.Model.extend('todos'),
     TodoList = Gnd.Model.extend('todolists'),
     todoList = new TodoList(),
     storageLocal  = new Gnd.Storage.Local();
     app = new Gnd.Base();
   
+  //
+  // Create a storageQueue using only a local storage
+  //
   Gnd.Model.storageQueue = new Gnd.Storage.Queue(storageLocal);
-    
-  function setFilter(all, active, completed){
-    app.set('filterAll', all);
-    app.set('filterActive', active);
-    app.set('filterCompleted', completed);
-  }
   
-  setFilter(true, false, false);
-  
-  var appViewModel = new Gnd.ViewModel($('#filters')[0], {app: app});
-  
-  todoList.all(Todo, function(err, todos){
-    var list = new TodoListCtrl(todos);
-     
-    list.createTodo({description: 'Write a book', completed: false});
-    list.createTodo({description: 'Plant a tree', completed: true});
-    list.createTodo({description: 'Coniferos', completed: true});
-     
-    Gnd.Route.listen(function(req) {
-      req.get(function() {
+  TodoList.findById(TODOLIST_ID, function(err, todoList){
+    if(!todoList){
+      todoList = new TodoList();
+      
+      // Force an ID so that we can find it easily next time the app starts
+      todoList.id(TODOLIST_ID); 
+      todoList.save();
+    }
+
+    // Keep the todo list synced so that Gnd automatically stores all the changes.
+    todoList.keepSynced();
         
-        if(req.isLast()){
-          list.showAll();
-          setFilter(true, false, false);
-        }
+    function setFilter(all, active, completed){
+      app.set('filterAll', all);
+      app.set('filterActive', active);
+      app.set('filterCompleted', completed);
+    }
+    setFilter(true, false, false);
+  
+    //
+    // Bind the App model (only used for keeping the filter links updated)
+    // (TODO: Only use one viewmodel for the whole APP)
+    var appViewModel = new Gnd.ViewModel(document.getElementById('filters'), {app: app});
+  
+    //
+    // Get the todos collection
+    //
+    todoList.all(Todo, function(err, todos){
+      
+      var todoListCtrl = new TodoListCtrl(todos);
+     
+      // 
+      // Listen to available routes. Only used for selecting filters
+      //
+      Gnd.Route.listen(function(req) {
+        req.get(function() {
         
-        req.get(':state', '', function() {
-          var state = this.params.state;
-          switch(state){
-            case 'active': 
-              list.showActive();
-              setFilter(false, true, false);
-              break;
-            case 'completed': 
-              list.showCompleted();
-              setFilter(false, false, true);
-              break;
+          if(req.isLast()){
+            todoListCtrl.showAll();
+            setFilter(true, false, false);
           }
-        });
+        
+          req.get(':state', '', function() {
+            var state = this.params.state;
+            switch(state){
+              case 'active': 
+                todoListCtrl.showActive();
+                setFilter(false, true, false);
+                break;
+              case 'completed': 
+                todoListCtrl.showCompleted();
+                setFilter(false, false, true);
+                break;
+            }
+          });
+        })
       })
-    })
-  })
+    });
+  });
 });

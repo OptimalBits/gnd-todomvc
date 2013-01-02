@@ -10,17 +10,23 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
       self.set('collection', collection);
       
       self.collection.on('added: updated: removed:', function(todo) {
-        self.updateCompleted();
-        self.updateCounter();
+        self.update();
       });
-           
+
       this.remaining = 0;
       this.completed = 0;
       
-      var todoListViewModel = new Gnd.ViewModel($('#todoapp')[0], {
+      var todoListViewModel = new Gnd.ViewModel(document.getElementById('todoapp'), {
         todolist: this,
         todos: collection
-      });      
+      });
+      
+      this.update();
+    },
+    
+    update: function(){
+      this.updateCompleted();
+      this.updateCounter();
     },
     
     createTodo: function(args){
@@ -38,6 +44,9 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
           itemIds.push(item.id());
         }
       });
+      for(var i=0; i<itemIds.length; i++){
+        Gnd.Model.removeById(['todos', itemIds[i]], Gnd.Util.noop);
+      }
       this.collection.remove(itemIds);
     },
     toggleAll: function(node, evt) {
@@ -55,8 +64,12 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
       }
     },
     removeTodo: function(node, evt){
-      var todoNode = node.parentNode.parentNode;
-      this.collection.remove(todoNode.getAttribute('data-item'));
+      var 
+        todoNode = node.parentNode.parentNode,
+        todoId = todoNode.getAttribute('data-item');
+      
+      this.collection.remove(todoId);
+      Gnd.Model.removeById(['todos', todoId], Gnd.Util.noop);
     },
     startEditing: function(node, evt){
       var todoNode = node.parentNode.parentNode;
@@ -83,6 +96,11 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
         return val.completed;
       });
       this.set('completed', itemsCompleted.length);
+      if(!itemsCompleted.length){
+        this.set('allCompleted', false);
+      } else if(itemsCompleted.length === this.collection.count){
+        this.set('allCompleted', true);
+      }
     },
     
     //
