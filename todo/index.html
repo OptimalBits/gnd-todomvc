@@ -62,7 +62,7 @@
     </section>
 		
     <footer id="footer" data-show="todos.count">
-  		<span id="todo-count"><strong data-bind="text: todolist.remaining"></strong> items left</span>
+  		<span id="todo-count"><strong data-bind="text: todolist.remaining"></strong><span data-bind="text: todolist.itemsLeftString"></span></span>
   		<ul id="filters">
   			<li>
   				<a data-class="selected: app.filterAll" href="#/">All</a>

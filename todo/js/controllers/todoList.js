@@ -15,6 +15,7 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
 
       this.remaining = 0;
       this.completed = 0;
+      this.itemsLeftString = 'items left';
       
       var todoListViewModel = new Gnd.ViewModel(document.getElementById('todoapp'), {
         todolist: this,
@@ -90,6 +91,11 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
         return !val.completed;
       })
       this.set('remaining', itemsLeft.length);
+      if(itemsLeft.length === 1){
+        this.set('itemsLeftString', ' item left');
+      } else {
+        this.set('itemsLeftString', ' items left');
+      }
     },
     updateCompleted : function(){
       var itemsCompleted = this.collection.filter(function(val){
