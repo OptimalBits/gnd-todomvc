@@ -33,6 +33,7 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
     createTodo: function(args){
       var model = new Todo(args);
       this.collection.add(model);
+      model.release();
     },
     
     //
