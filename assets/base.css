@@ -154,11 +154,10 @@ label[for='toggle-all'] {
 }
 
 #toggle-all {
+  left: -4px;
+  top: -42px;
+  width: 40px;
 	position: absolute;
-	top: -56px;
-	left: -15px;
-	width: 65px;
-	height: 41px;
 	text-align: center;
 	border: none; /* Mobile Safari */
 	-webkit-appearance: none;
@@ -170,7 +169,7 @@ label[for='toggle-all'] {
 	/*-moz-transform: rotate(90deg);*/
 	-ms-transform: rotate(90deg);
 	/*-o-transform: rotate(90deg);*/
-	transform: rotate(90deg);
+	/*transform: rotate(90deg);*/
 }
 
 #toggle-all:before {
@@ -219,7 +218,7 @@ label[for='toggle-all'] {
 #todo-list li .toggle {
 	text-align: center;
 	width: 40px;
-	height: 40px;
+	height: auto;
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -402,5 +401,16 @@ label[for='toggle-all'] {
 	#toggle-all,
 	#todo-list li .toggle {
 		background: none;
+    height: 40px;
 	}
+  #toggle-all {
+    top: -56px;
+    left: -15px;
+    width: 65px;
+    height: 41px;
+    -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);
+    -webkit-appearance: none;
+    appearance: none;
+  }
 }
