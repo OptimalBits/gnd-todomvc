@@ -75,12 +75,12 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
     },
     startEditing: function(node, evt){
       var todoNode = node.parentNode.parentNode;
-      getTodoFromNode(todoNode).set('isEditing', true);
+      this._getTodoFromNode(todoNode).set('isEditing', true);
     },
     endEditing: function(node, evt){
       if(evt.which === 13 || evt.type === 'blur'){
         var todoNode = node.parentNode;
-        getTodoFromNode(todoNode).set('isEditing', false);
+        this._getTodoFromNode(todoNode).set('isEditing', false);
       }
     },
     
@@ -125,14 +125,17 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
       this.collection.set('filterFn', function(item){
         return !item.completed;
       });
+    },
+    
+    //
+    // Private
+    //
+    _getTodoFromNode: function(node){
+      var todo = this.collection.find(function(item){
+        return item.id() === node.getAttribute('data-item');
+      });
+      return todo;
     }
-  }
-  
-  var getTodoFromNode = function(node){
-    var todo = this.collection.find(function(item){
-      return item.id() === todo.getAttribute('data-item');
-    });
-    return todo;
   }
   
 })
