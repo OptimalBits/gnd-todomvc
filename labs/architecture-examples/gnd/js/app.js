@@ -1,5 +1,5 @@
-curl(['gnd', 'js/controllers/todoList'], function(Gnd, TodoListCtrl){
-  var 
+curl(['gnd', 'todoList'], function(Gnd, TodoListCtrl){
+  var
     TODOLIST_ID = "GndTodoApp",
     Todo = Gnd.Model.extend('todos'),
     TodoList = Gnd.Model.extend('todolists'),
