@@ -1,5 +1,6 @@
-# Template • [TodoMVC](http://todomvc.com)
+# Ground  TodoMVC app
 
+A todo application build using [Ground][http:\\gnd.io]
 
 
 ## Getting Started
@@ -12,6 +13,6 @@ Read the [App Specification](https://github.com/addyosmani/todomvc/wiki/App-Spec
 Feel free to [contact us](https://github.com/sindresorhus) if you have any questions or need help with the template.
 
 
-## Credit
+## Credits
 
-Created by [Sindre Sorhus](http://sindresorhus.com)
+Created by [OptimalBits](http://optimalbits.com)
