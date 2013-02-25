@@ -19,14 +19,6 @@
             main: 'gnd',
             lib: ''
           },
-          'jquery': {
-            path: 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/',
-            main: 'jquery.min'
-          },
-          'jqueryui': {
-            path: 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/',
-            main: 'jquery-ui.min'
-          },
           'underscore':{
             path:'lib/',
             main:'underscore'
@@ -35,7 +27,6 @@
       };
     </script>
   
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script src="js/lib/underscore.js"></script>
     <script src="js/lib/curl.js"></script>
 </head>
@@ -43,21 +34,33 @@
 	<section id="todoapp">
 		<header id="header">
 			<h1>todos</h1>
-      <input id="new-todo" data-event="keyup: todolist.addTodo" placeholder="What needs to be done?" autofocus>
+      <input id="new-todo" autofocus
+        data-event="keyup: todolist.addTodo" 
+        placeholder="What needs to be done?">
 		</header>
     
 		<section id="main">
-			<input id="toggle-all" data-event="click: todolist.toggleAll" data-bind="checked: todolist.allCompleted" type="checkbox">
+			<input id="toggle-all" type="checkbox"
+        data-event="click: todolist.toggleAll"
+        data-bind="checked: todolist.allCompleted">
+      
 			<label for="toggle-all">Mark all as complete</label>
       
 			<ul id="todo-list">
-        <li id="todo-item" data-each="todos: todo" data-class="completed: todo.completed; editing: todo.isEditing">
+        <li id="todo-item" 
+          data-each="todos: todo"
+          data-class="completed: todo.completed; editing: todo.isEditing">
           <div class="view">
-  			    <input class="toggle" type="checkbox" data-bind="checked: todo.completed">
-  			    <label data-bind="text: todo.description" data-event="dblclick: todolist.startEditing"></label>
-  			    <button data-event="click: todolist.removeTodo" class="destroy"></button>
+  			    <input class="toggle" type="checkbox"
+              data-bind="checked: todo.completed">
+  			    <label data-bind="text: todo.description" 
+              data-event="dblclick: todolist.startEditing"></label>
+  			    <button data-event="click: todolist.removeTodo"
+              class="destroy"></button>
   		    </div>
-          <input class="edit" data-bind="value: todo.description" data-event="keyup: todolist.endEditing; blur: todolist.endEditing">
+          <input class="edit" type="text"
+            data-bind="value: todo.description"
+            data-event="keyup: todolist.endEditing; blur: todolist.endEditing">
         </li>
 			</ul>
     </section>
