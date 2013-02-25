@@ -34,7 +34,7 @@ curl(['gnd', 'todoList'], function(Gnd, TodoListCtrl){
     //
     // Bind the App model (only used for keeping the filter links updated)
     // (TODO: Only use one viewmodel for the whole APP)
-    var appViewModel = new Gnd.ViewModel(document.getElementById('filters'), {app: app});
+    var appViewModel = new Gnd.ViewModel(Gnd.$('#filters')[0], {app: app});
   
     //
     // Get the todos collection

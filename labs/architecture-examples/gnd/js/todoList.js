@@ -17,7 +17,7 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
       this.completed = 0;
       this.itemsLeftString = 'items left';
       
-      var todoListViewModel = new Gnd.ViewModel(document.getElementById('todoapp'), {
+      var todoListViewModel = new Gnd.ViewModel(Gnd.$('#todoapp')[0], {
         todolist: this,
         todos: collection
       });
@@ -58,7 +58,7 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
     },
     addTodo: function(node, evt) {
       if(evt.which === 13) {
-        var description = $.trim(node.value);
+        var description = Gnd.Util.trim(node.value);
         if ( description != '' ){
           node.value = '';
           this.createTodo({description : description});
@@ -76,6 +76,7 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
     startEditing: function(node, evt){
       var todoNode = node.parentNode.parentNode;
       this._getTodoFromNode(todoNode).set('isEditing', true);
+      Gnd.$('.edit', todoNode)[0].focus();
     },
     endEditing: function(node, evt){
       if(evt.which === 13 || evt.type === 'blur'){
