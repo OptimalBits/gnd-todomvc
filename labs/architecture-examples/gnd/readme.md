@@ -1,16 +1,8 @@
 # Ground  TodoMVC app
 
-A todo application build using [Ground][http:\\gnd.io]
+A todo application build using [Ground](http:\\gnd.io). Ground is a web development framework written in Typescript, with focus on client server synchronization and offline support. It is small, modular, robust and fairly well documented.
 
-
-## Getting Started
-
-Read the [App Specification](https://github.com/addyosmani/todomvc/wiki/App-Specification) before touching the template.
-
-
-## Need help?
-
-Feel free to [contact us](https://github.com/sindresorhus) if you have any questions or need help with the template.
+This TodoMVC application was written in javascript to demonstrate how ground can be used equally in Javascript or Typescript projects.
 
 
 ## Credits
