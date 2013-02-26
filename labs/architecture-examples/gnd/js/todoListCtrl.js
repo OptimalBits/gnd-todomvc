@@ -1,9 +1,11 @@
 define(['gnd'], function(Gnd) {
-return Gnd.Util.extend(Gnd.Base, function(_super){
+'use strict';
+  
+return Gnd.Util.extend(Gnd.Base, function(_super) {
   var Todo = Gnd.Model.extend('todos');
   
   return {
-    constructor : function TodoList(collection){
+    constructor: function TodoList(collection) {
       var self = this;
       _super.constructor.call(self);
 
@@ -30,7 +32,7 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
       this.updateCounter();
     },
     
-    createTodo: function(args){
+    createTodo: function(args) {
       var model = new Todo(args);
       this.collection.add(model);
       model.release();
@@ -39,14 +41,14 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
     //
     // Event Handlers
     //
-    clearCompleted: function(node, evt){
+    clearCompleted: function(node, evt) {
       var itemIds = [];
-      this.collection.each(function(item){
-        if(item.completed){
+      this.collection.each(function(item) {
+        if (item.completed) {
           itemIds.push(item.id());
         }
       });
-      for(var i=0; i<itemIds.length; i++){
+      for (var i=0; i<itemIds.length; i++) {
         Gnd.Model.removeById(['todos', itemIds[i]], Gnd.Util.noop);
       }
       this.collection.remove(itemIds);
@@ -57,15 +59,15 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
       });
     },
     addTodo: function(node, evt) {
-      if(evt.which === 13) {
+      if (evt.which === 13) {
         var description = Gnd.Util.trim(node.value);
-        if ( description != '' ){
+        if (description != '') {
           node.value = '';
           this.createTodo({description : description});
         }
       }
     },
-    removeTodo: function(node, evt){
+    removeTodo: function(node, evt) {
       var 
         todoNode = node.parentNode.parentNode,
         todoId = todoNode.getAttribute('data-item');
@@ -73,40 +75,42 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
       this.collection.remove(todoId);
       Gnd.Model.removeById(['todos', todoId], Gnd.Util.noop);
     },
-    startEditing: function(node, evt){
+    
+    startEditing: function(node, evt) {
       var todoNode = node.parentNode.parentNode;
-      this._getTodoFromNode(todoNode).set('isEditing', true);
+      todoNode['gnd-obj'].set('isEditing', true);
       Gnd.$('.edit', todoNode)[0].focus();
     },
-    endEditing: function(node, evt){
-      if(evt.which === 13 || evt.type === 'blur'){
+    
+    endEditing: function(node, evt) {
+      if (evt.which === 13 || evt.type === 'blur') {
         var todoNode = node.parentNode;
-        this._getTodoFromNode(todoNode).set('isEditing', false);
+        todoNode['gnd-obj'].set('isEditing', false);
       }
     },
     
     //
     // Stats updaters
     //
-    updateCounter : function() {
+    updateCounter: function() {
       var itemsLeft = this.collection.filter(function(val) {
         return !val.completed;
       })
       this.set('remaining', itemsLeft.length);
-      if(itemsLeft.length === 1){
+      if (itemsLeft.length === 1) {
         this.set('itemsLeftString', ' item left');
       } else {
         this.set('itemsLeftString', ' items left');
       }
     },
-    updateCompleted : function(){
-      var itemsCompleted = this.collection.filter(function(val){
+    updateCompleted: function() {
+      var itemsCompleted = this.collection.filter(function(val) {
         return val.completed;
       });
       this.set('completed', itemsCompleted.length);
-      if(!itemsCompleted.length){
+      if (!itemsCompleted.length) {
         this.set('allCompleted', false);
-      } else if(itemsCompleted.length === this.collection.count){
+      } else if (itemsCompleted.length === this.collection.count) {
         this.set('allCompleted', true);
       }
     },
@@ -114,30 +118,19 @@ return Gnd.Util.extend(Gnd.Base, function(_super){
     //
     // Filters
     //
-    showAll: function(){
+    showAll: function() {
       this.collection.set('filterFn', null);
     },
-    showCompleted: function(){
-      this.collection.set('filterFn', function(item){
+    showCompleted: function() {
+      this.collection.set('filterFn', function(item) {
         return !!item.completed;
       });
     },
-    showActive: function(){
-      this.collection.set('filterFn', function(item){
+    showActive: function() {
+      this.collection.set('filterFn', function(item) {
         return !item.completed;
       });
-    },
-    
-    //
-    // Private
-    //
-    _getTodoFromNode: function(node){
-      var todo = this.collection.find(function(item){
-        return item.id() === node.getAttribute('data-item');
-      });
-      return todo;
-    }
+    }, 
   }
-  
 })
 });

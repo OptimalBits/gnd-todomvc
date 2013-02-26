@@ -86,7 +86,7 @@ var Gnd;
             return this;
         };
         Query.prototype.attr = function (attr, value) {
-            if(value) {
+            if(!_.isUndefined(value)) {
                 _.each(this, function (el) {
                     setAttr(el, attr, value);
                 });
@@ -155,7 +155,7 @@ var Gnd;
     }
     Gnd.makeElement = makeElement;
     function setAttr(el, attr, value) {
-        if(el[attr]) {
+        if(!_.isUndefined(el[attr])) {
             el[attr] = value;
         }
         if(value) {
@@ -166,7 +166,7 @@ var Gnd;
     }
     Gnd.setAttr = setAttr;
     function getAttr(el, attr) {
-        if(el[attr]) {
+        if(!_.isUndefined(el[attr])) {
             return el[attr];
         } else {
             var val = el.getAttribute(attr);

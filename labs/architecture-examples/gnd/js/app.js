@@ -1,19 +1,20 @@
-curl(['gnd', 'todoList'], function(Gnd, TodoListCtrl){
-  var
-    TODOLIST_ID = "GndTodoApp",
-    Todo = Gnd.Model.extend('todos'),
-    TodoList = Gnd.Model.extend('todolists'),
-    todoList = new TodoList(),
-    storageLocal  = new Gnd.Storage.Local();
-    app = new Gnd.Base();
+curl(['gnd', 'todoListCtrl'], function(Gnd, TodoListCtrl){
+'use strict';
+  
+  var TODOLIST_ID = "GndTodoApp";
+  var Todo = Gnd.Model.extend('todos');
+  var TodoList = Gnd.Model.extend('todolists');
+  var todoList = new TodoList();
+  var storageLocal  = new Gnd.Storage.Local();
+  var app = new Gnd.Base();
   
   //
   // Create a storageQueue using only a local storage
   //
   Gnd.Model.storageQueue = new Gnd.Storage.Queue(storageLocal);
   
-  TodoList.findById(TODOLIST_ID, function(err, todoList){
-    if(!todoList){
+  TodoList.findById(TODOLIST_ID, function(err, todoList) {
+    if (!todoList) {
       todoList = new TodoList();
       
       // Force an ID so that we can find it easily next time the app starts
@@ -24,7 +25,7 @@ curl(['gnd', 'todoList'], function(Gnd, TodoListCtrl){
     // Keep the todo list synced so that Gnd automatically stores all the changes.
     todoList.keepSynced();
         
-    function setFilter(all, active, completed){
+    function setFilter(all, active, completed) {
       app.set('filterAll', all);
       app.set('filterActive', active);
       app.set('filterCompleted', completed);
@@ -39,7 +40,7 @@ curl(['gnd', 'todoList'], function(Gnd, TodoListCtrl){
     //
     // Get the todos collection
     //
-    todoList.all(Todo, function(err, todos){
+    todoList.all(Todo, function(err, todos) {
       
       var todoListCtrl = new TodoListCtrl(todos);
      
@@ -49,23 +50,19 @@ curl(['gnd', 'todoList'], function(Gnd, TodoListCtrl){
       Gnd.Route.listen(function(req) {
         req.get(function() {
         
-          if(req.isLast()){
+          if (req.isLast()) {
             todoListCtrl.showAll();
             setFilter(true, false, false);
           }
         
-          req.get(':state', '', function() {
-            var state = this.params.state;
-            switch(state){
-              case 'active': 
-                todoListCtrl.showActive();
-                setFilter(false, true, false);
-                break;
-              case 'completed': 
-                todoListCtrl.showCompleted();
-                setFilter(false, false, true);
-                break;
-            }
+          req.get('active', '', function() {
+            todoListCtrl.showActive();
+            setFilter(false, true, false);
+          });
+          
+          req.get('completed', '', function() {
+            todoListCtrl.showCompleted();
+            setFilter(false, false, true);
           });
         })
       })
