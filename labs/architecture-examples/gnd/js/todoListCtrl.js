@@ -22,6 +22,8 @@ return Gnd.Util.extend(Gnd.Base, function(_super) {
       var todoListViewModel = new Gnd.ViewModel(Gnd.$('#todoapp')[0], {
         todolist: this,
         todos: collection
+      },{
+        escape:_.escape
       });
       
       this.update();

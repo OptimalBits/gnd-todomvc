@@ -51,7 +51,7 @@
           <div class="view">
   			    <input class="toggle" type="checkbox"
               data-bind="checked: todo.completed">
-  			    <label data-bind="text: todo.description" 
+  			    <label data-bind="text: todo.description | escape" 
               data-event="dblclick: todolist.startEditing"></label>
   			    <button data-event="click: todolist.removeTodo"
               class="destroy"></button>
